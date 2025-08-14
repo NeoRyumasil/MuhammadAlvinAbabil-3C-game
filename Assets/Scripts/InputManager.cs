@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class InputManager : MonoBehaviour
 {
-    public Action OnMoveInput;
+    // Event Listener untuk menangani input pergerakan
+    public Action<Vector2> OnMoveInput;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +29,7 @@ public class InputManager : MonoBehaviour
         CheckMainMenuInput();
     }
 
+    // Check Input Pergerakan
     private void CheckMovementInput()
     {
         float verticalAxis = Input.GetAxis("Vertical");
@@ -39,6 +42,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Sprint
     private void CheckSprintInput()
     {
         bool isHoldSprintInput = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -53,6 +57,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Jump
     private void CheckJumpInput()
     {
         bool isPressJumpInput = Input.GetKeyDown(KeyCode.Space);
@@ -63,6 +68,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Crouch
     private void CheckCrouchInput()
     {
         bool isPressCrouchInput = Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl);
@@ -73,6 +79,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Change POV Camera
     private void CheckChangePOVInput()
     {
         bool isPressChangePOVInput = Input.GetKeyDown(KeyCode.Q);
@@ -83,6 +90,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Climb
     private void CheckClimbInput()
     {
         bool isPressClimbInput = Input.GetKeyDown(KeyCode.E);
@@ -93,6 +101,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Glide
     private void CheckGlideInput()
     {
         bool isPressGlideInput = Input.GetKeyDown(KeyCode.G);
@@ -103,6 +112,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Cancel
     private void CheckCancelInput()
     {
         bool isPressCancelInput = Input.GetKeyDown(KeyCode.C);
@@ -113,6 +123,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Punch
     private void CheckPunchInput()
     {
         bool isPressPunchInput = Input.GetKeyDown(KeyCode.Mouse0);
@@ -123,6 +134,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Check Input Main Menu
     private void CheckMainMenuInput()
     {
         bool isPressMainMenuInput = Input.GetKeyDown(KeyCode.Escape);
