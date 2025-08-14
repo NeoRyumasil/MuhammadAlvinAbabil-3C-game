@@ -9,6 +9,7 @@ public class InputManager : MonoBehaviour
     public Action<Vector2> OnMoveInput;
     public Action<bool> OnSprintInput;
     public Action OnJumpInput;
+    public Action OnClimbInput;
 
     // Start is called before the first frame update
     void Start()
@@ -108,7 +109,7 @@ public class InputManager : MonoBehaviour
 
         if (isPressClimbInput)
         {
-            Debug.Log("Climb");
+            OnClimbInput();
         }
     }
 
