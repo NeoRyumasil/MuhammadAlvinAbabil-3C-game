@@ -49,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnSprintInput += Sprint;
         _input.OnJumpInput += Jump;
         _input.OnClimbInput += StartClimb;
+        _input.OnCancelClimbInput += CancelClimb;
     }
 
 
@@ -75,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnSprintInput -= Sprint;
         _input.OnJumpInput -= Jump;
         _input.OnClimbInput -= StartClimb;
+        _input.OnCancelClimbInput -= CancelClimb;
     }
 
     // Pergerakan Player
@@ -169,6 +171,17 @@ public class PlayerMovement : MonoBehaviour
             transform.position = hit.point - offset;
             _playerStance = PlayerStance.Climb;
             _rigidbody.useGravity = false;
+        }
+    }
+
+    // Player Cancel Climb
+    private void CancelClimb()
+    {
+        if (_playerStance == PlayerStance.Climb)
+        {
+            _playerStance = PlayerStance.Stand;
+            _rigidbody.useGravity = true;
+            transform.position -= transform.forward * 1f;
         }
     }
 }

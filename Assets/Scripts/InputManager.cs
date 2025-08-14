@@ -10,6 +10,7 @@ public class InputManager : MonoBehaviour
     public Action<bool> OnSprintInput;
     public Action OnJumpInput;
     public Action OnClimbInput;
+    public Action OnCancelClimbInput;
 
     // Start is called before the first frame update
     void Start()
@@ -131,7 +132,10 @@ public class InputManager : MonoBehaviour
 
         if (isPressCancelInput)
         {
-            Debug.Log("Cancel C");
+            if (OnCancelClimbInput != null)
+            {
+                OnCancelClimbInput();
+            }
         }
     }
 
