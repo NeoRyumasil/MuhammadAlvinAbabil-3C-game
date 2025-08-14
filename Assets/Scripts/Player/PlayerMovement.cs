@@ -6,10 +6,15 @@ public class PlayerMovement : MonoBehaviour
 {
     // Player Attributes
     [SerializeField] private float _walkSpeed = 350f;
+    [SerializeField] private float _sprintSpeed = 450f;
+    [SerializeField] private float _speed;
 
     // Player Rotation
     [SerializeField] private float _rotationSmoothTime = 0.1f;
     [SerializeField] private float _rotationSmoothVelocity;
+
+    // Player Sprint
+    [SerializeField] private float _walkSprintTransition = 30f;
 
     // Game Object References
     [SerializeField] private InputManager _input;
@@ -21,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         _input.OnMoveInput += Move;
+        _input.OnSprintInput += Sprint;
     }
 
 
@@ -28,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _speed = _walkSpeed;
     }
 
     // Update is called once per frame
@@ -41,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
     {
 
         _input.OnMoveInput -= Move;
+        _input.OnSprintInput -= Sprint;
     }
 
     // Pergerakan Player
@@ -57,6 +65,22 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
             movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
             _rigidbody.AddForce(movementDirection * Time.deltaTime * _walkSpeed);
+        }
+    }
+
+    // Player Sprint
+    private void Sprint(bool isSprint)
+    {
+        if (isSprint)
+        {
+            _speed = _speed + _walkSprintTransition * Time.deltaTime;
+        }
+        else
+        {
+            if (_speed > _walkSpeed)
+            {
+                _speed = _speed - _walkSprintTransition * Time.deltaTime;
+            }
         }
     }
 }

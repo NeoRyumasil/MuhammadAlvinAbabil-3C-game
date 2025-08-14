@@ -7,6 +7,7 @@ public class InputManager : MonoBehaviour
 {
     // Event Listener untuk menangani input pergerakan
     public Action<Vector2> OnMoveInput;
+    public Action<bool> OnSprintInput;
 
     // Start is called before the first frame update
     void Start()
@@ -49,11 +50,17 @@ public class InputManager : MonoBehaviour
 
         if (isHoldSprintInput)
         {
-            Debug.Log("Sprinting");
+            if (OnSprintInput != null)
+            {
+                OnSprintInput(true);
+            }
         }
         else
         {
-            Debug.Log("Not Sprinting");
+            if (OnSprintInput != null)
+            {
+                OnSprintInput(false);
+            }
         }
     }
 
