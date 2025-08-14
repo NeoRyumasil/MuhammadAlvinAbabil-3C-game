@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _walkSpeed = 350f;
     [SerializeField] private float _sprintSpeed = 450f;
     [SerializeField] private float _speed;
+    [SerializeField] private float _jumpForce = 21000f;
 
     // Player Rotation
     [SerializeField] private float _rotationSmoothTime = 0.1f;
@@ -16,8 +17,14 @@ public class PlayerMovement : MonoBehaviour
     // Player Sprint
     [SerializeField] private float _walkSprintTransition = 30f;
 
+    // Player Jump
+    [SerializeField] private float _detectorRadius = 0.2f;
+    [SerializeField] private LayerMask _groundLayer;
+    private bool _isGrounded;
+
     // Game Object References
     [SerializeField] private InputManager _input;
+    [SerializeField] private Transform _groundDetector;
 
     // Components References
     private Rigidbody _rigidbody;
@@ -33,6 +40,8 @@ public class PlayerMovement : MonoBehaviour
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
+        _input.OnJumpInput += Jump;
+
         _rigidbody = GetComponent<Rigidbody>();
         _speed = _walkSpeed;
     }
@@ -40,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        CheckIsGrounded();
     }
 
     // Menghapus event listener untuk menghindari memory leak
@@ -49,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
 
         _input.OnMoveInput -= Move;
         _input.OnSprintInput -= Sprint;
+        _input.OnJumpInput -= Jump;
     }
 
     // Pergerakan Player
@@ -73,7 +83,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isSprint)
         {
-            _speed = _speed + _walkSprintTransition * Time.deltaTime;
+            if (_speed < _sprintSpeed)
+            {
+                _speed = _speed + _walkSprintTransition * Time.deltaTime;
+            }
         }
         else
         {
@@ -82,5 +95,21 @@ public class PlayerMovement : MonoBehaviour
                 _speed = _speed - _walkSprintTransition * Time.deltaTime;
             }
         }
+    }
+
+    // Player Jump
+    private void Jump()
+    {
+        if (_isGrounded)
+        {
+            Vector3 jumpDirection = Vector3.up;
+            _rigidbody.AddForce(jumpDirection * _jumpForce * Time.deltaTime);
+        }
+    }
+
+    // Grounded Checker
+    private void CheckIsGrounded()
+    {
+        _isGrounded = Physics.CheckSphere(_groundDetector.position, _detectorRadius, _groundLayer);
     }
 }

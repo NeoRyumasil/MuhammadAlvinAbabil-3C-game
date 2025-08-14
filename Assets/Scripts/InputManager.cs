@@ -8,6 +8,7 @@ public class InputManager : MonoBehaviour
     // Event Listener untuk menangani input pergerakan
     public Action<Vector2> OnMoveInput;
     public Action<bool> OnSprintInput;
+    public Action OnJumpInput;
 
     // Start is called before the first frame update
     void Start()
@@ -71,7 +72,10 @@ public class InputManager : MonoBehaviour
 
         if (isPressJumpInput)
         {
-            Debug.Log("Jump");
+            if (OnJumpInput != null)
+            {
+                OnJumpInput();
+            }
         }
     }
 

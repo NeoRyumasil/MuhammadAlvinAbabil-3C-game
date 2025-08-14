@@ -470,6 +470,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ad6ef1537ce8e64ebfdef0da5a90797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2096283334
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2096283335}
+  m_Layer: 0
+  m_Name: GroundDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2096283335
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096283334}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &13000610966827886
 GameObject:
   m_ObjectHideFlags: 0
@@ -2574,8 +2605,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fb00ac5fa0aed24b832441ad159f0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 0
+  _walkSpeed: 350
+  _sprintSpeed: 450
+  _speed: 0
+  _jumpForce: 21000
+  _rotationSmoothTime: 0.1
+  _rotationSmoothVelocity: 0
+  _walkSprintTransition: 30
+  _detectorRadius: 0.2
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   _input: {fileID: 1936616051}
+  _groundDetector: {fileID: 2096283335}
 --- !u!136 &2098157234158518498
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -9468,3 +9510,4 @@ SceneRoots:
   - {fileID: 4238077229347368901}
   - {fileID: 1609463264412899930}
   - {fileID: 1936616050}
+  - {fileID: 2096283335}
