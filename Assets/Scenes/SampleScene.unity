@@ -494,12 +494,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096283334}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1609463264412899930}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &13000610966827886
 GameObject:
@@ -2199,6 +2199,7 @@ Transform:
   - {fileID: 1326059428828341172}
   - {fileID: 3721708923618072949}
   - {fileID: 6486771722750098126}
+  - {fileID: 2096283335}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1618271132537789093
@@ -2608,7 +2609,7 @@ MonoBehaviour:
   _walkSpeed: 350
   _sprintSpeed: 450
   _speed: 0
-  _jumpForce: 21000
+  _jumpForce: 10000
   _rotationSmoothTime: 0.1
   _rotationSmoothVelocity: 0
   _walkSprintTransition: 30
@@ -2616,6 +2617,9 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  _upperStepOffset: {x: 0, y: 0.3, z: 0.3}
+  _stepCheckerDistance: 0.1
+  _stepForce: 50
   _input: {fileID: 1936616051}
   _groundDetector: {fileID: 2096283335}
 --- !u!136 &2098157234158518498
@@ -9510,4 +9514,3 @@ SceneRoots:
   - {fileID: 4238077229347368901}
   - {fileID: 1609463264412899930}
   - {fileID: 1936616050}
-  - {fileID: 2096283335}
