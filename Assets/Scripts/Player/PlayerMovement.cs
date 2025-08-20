@@ -162,7 +162,7 @@ public class PlayerMovement : MonoBehaviour
     // Player Wall Climb
     private void StartClimb()
     {
-        bool isInFrontOfClimbingWall = Physics.Raycast(_climbDetector.position, transform.forward, out RaycastHit hit, _climbableLayer);
+        bool isInFrontOfClimbingWall = Physics.Raycast(_climbDetector.position, transform.forward, out RaycastHit hit, _climbCheckDistance ,_climbableLayer);
         bool isNotClimbing = _playerStance != PlayerStance.Climb;
 
         if (isInFrontOfClimbingWall && _isGrounded && isNotClimbing)
@@ -189,7 +189,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // Climb Detector
         Gizmos.color = Color.red;
-        bool isInFrontOfClimbingWall = Physics.Raycast(_climbDetector.position, transform.forward, out RaycastHit hit, _climbableLayer);
+        bool isInFrontOfClimbingWall = Physics.Raycast(_climbDetector.position, transform.forward, out RaycastHit hit, _climbCheckDistance, _climbableLayer);
 
         if (isInFrontOfClimbingWall)
         {
