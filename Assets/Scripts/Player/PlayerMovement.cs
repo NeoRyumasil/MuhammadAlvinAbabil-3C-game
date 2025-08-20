@@ -99,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
                 movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
 
                 // Pergerakan Player
-                _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime);
+                _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange);
             }
             // Pergerakan Player Memanjat
             else if (isPlayerClimbing)
@@ -137,7 +137,7 @@ public class PlayerMovement : MonoBehaviour
         if (_isGrounded)
         {
             Vector3 jumpDirection = Vector3.up;
-            _rigidbody.AddForce(jumpDirection * _jumpForce * Time.deltaTime);
+            _rigidbody.AddForce(jumpDirection * _jumpForce, ForceMode.Impulse);
         }
     }
 
@@ -183,5 +183,20 @@ public class PlayerMovement : MonoBehaviour
             _rigidbody.useGravity = true;
             transform.position -= transform.forward * 1f;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        // Climb Detector
+        Gizmos.color = Color.red;
+        bool isInFrontOfClimbingWall = Physics.Raycast(_climbDetector.position, transform.forward, out RaycastHit hit, _climbableLayer);
+
+        if (isInFrontOfClimbingWall)
+        {
+            Gizmos.color = Color.green;
+        }
+
+        Gizmos.DrawLine(_climbDetector.position, _climbDetector.position + (_climbDetector.forward * _climbCheckDistance));
+        
     }
 }

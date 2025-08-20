@@ -2743,10 +2743,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fb00ac5fa0aed24b832441ad159f0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 350
-  _sprintSpeed: 450
+  _walkSpeed: 10
+  _sprintSpeed: 20
   _speed: 0
-  _jumpForce: 10000
+  _jumpForce: 5
+  _climbSpeed: 200
   _rotationSmoothTime: 0.1
   _rotationSmoothVelocity: 0
   _walkSprintTransition: 30
