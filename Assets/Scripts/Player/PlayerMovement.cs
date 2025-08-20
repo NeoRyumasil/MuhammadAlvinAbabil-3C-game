@@ -5,39 +5,51 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     // Player Attributes
-    [SerializeField] private float _walkSpeed = 350f;
-    [SerializeField] private float _sprintSpeed = 450f;
+    [Header("Player Attributes")]
+    [SerializeField] private float _walkSpeed = 10f;
+    [SerializeField] private float _sprintSpeed = 20f;
     [SerializeField] private float _speed;
-    [SerializeField] private float _jumpForce = 21000f;
-    [SerializeField] private float _climbSpeed = 200f;
+    [SerializeField] private float _jumpForce = 5f;
+    [SerializeField] private float _climbSpeed = 5f;
     private PlayerStance _playerStance;
 
     // Player Rotation
+    [Header("Player Rotation")]
     [SerializeField] private float _rotationSmoothTime = 0.1f;
     [SerializeField] private float _rotationSmoothVelocity;
 
     // Player Sprint
-    [SerializeField] private float _walkSprintTransition = 30f;
+    [Header("Player Sprint")]
+    [SerializeField] private float _walkSprintTransition = 15f;
 
     // Player Jump
+    [Header("Player Jump")]
     [SerializeField] private float _detectorRadius = 0.2f;
     [SerializeField] private LayerMask _groundLayer;
     private bool _isGrounded;
 
     // Player Stair Climb
+    [Header("Player Stair Climb")]
     [SerializeField] private Vector3 _upperStepOffset;
     [SerializeField] private float _stepCheckerDistance;
     [SerializeField] private float _stepForce;
 
     // Player Wall Climb
+    [Header("Player Wall Climb")]
     [SerializeField] private float _climbCheckDistance;
     [SerializeField] private LayerMask _climbableLayer;
     [SerializeField] private Vector3 _climbOffset;
 
     // Game Object References
+    [Header("Game Object References")]
     [SerializeField] private InputManager _input;
     [SerializeField] private Transform _groundDetector;
     [SerializeField] private Transform _climbDetector;
+    [SerializeField] private Transform _leftClimbBorder;
+    [SerializeField] private Transform _rightClimbBorder;
+    [SerializeField] private Transform _upperClimbBorder;
+    [SerializeField] private Transform _lowerClimbBorder;
+
 
     // Components References
     private Rigidbody _rigidbody;
@@ -104,10 +116,41 @@ public class PlayerMovement : MonoBehaviour
             // Pergerakan Player Memanjat
             else if (isPlayerClimbing)
             {
+                bool isInLeftClimbBorder = Physics.Raycast(_leftClimbBorder.position, transform.forward, out RaycastHit leftHit, _climbCheckDistance, _climbableLayer);
+                bool isInRightClimbBorder = Physics.Raycast(_rightClimbBorder.position, transform.forward, out RaycastHit rightHit, _climbCheckDistance, _climbableLayer);
+                bool isInUpperClimbBorder = Physics.Raycast(_upperClimbBorder.position, transform.forward, out RaycastHit upperHit, _climbCheckDistance, _climbableLayer);
+                bool isInLowerClimbBorder = Physics.Raycast(_lowerClimbBorder.position, transform.forward, out RaycastHit lowerHit, _climbCheckDistance, _climbableLayer);
+                
+                // Border Climb Checker
+                if (axisDirection.x < 0 && !isInLeftClimbBorder)
+                {
+                    axisDirection.x = 0;
+                    _rigidbody.velocity = Vector3.zero;
+                }
+
+                if (axisDirection.x > 0 && !isInRightClimbBorder)
+                {
+                    axisDirection.x = 0;
+                    _rigidbody.velocity = Vector3.zero;
+                }
+
+                if (axisDirection.y > 0 && !isInUpperClimbBorder)
+                {
+                    axisDirection.y = 0;
+                    _rigidbody.velocity = Vector3.zero;
+                }
+
+                if (axisDirection.y < 0 && !isInLowerClimbBorder)
+                {
+                    axisDirection.y = 0;
+                    _rigidbody.velocity = Vector3.zero;
+                }
+
+                // Pergerakan Player Memanjat
                 Vector3 horizontal = axisDirection.x * transform.right;
                 Vector3 vertical = axisDirection.y * transform.up;
                 movementDirection = horizontal + vertical;
-                _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime);
+                _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime, ForceMode.VelocityChange);
             }
         }
     }
@@ -169,6 +212,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 offset = (transform.forward * _climbOffset.z) + (Vector3.up * _climbOffset.y);
             transform.position = hit.point - offset;
+            transform.rotation = Quaternion.LookRotation(-hit.normal, Vector3.up);
             _playerStance = PlayerStance.Climb;
             _rigidbody.useGravity = false;
         }
@@ -187,16 +231,47 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        // Climb Detector
         Gizmos.color = Color.red;
+
+        // Climb Detector
         bool isInFrontOfClimbingWall = Physics.Raycast(_climbDetector.position, transform.forward, out RaycastHit hit, _climbCheckDistance, _climbableLayer);
 
+        // Climb Border
+        bool isInLeftClimbBorder = Physics.Raycast(_climbDetector.position, -transform.right, out RaycastHit leftHit, _climbCheckDistance, _climbableLayer);
+        bool isInRightClimbBorder = Physics.Raycast(_climbDetector.position, transform.right, out RaycastHit rightHit, _climbCheckDistance, _climbableLayer);
+        bool isInUpperClimbBorder = Physics.Raycast(_climbDetector.position, transform.up, out RaycastHit upperHit, _climbCheckDistance, _climbableLayer);
+        bool isInLowerClimbBorder = Physics.Raycast(_climbDetector.position, -transform.up, out RaycastHit lowerHit, _climbCheckDistance, _climbableLayer);
+
+        // Gizmos Condition Checker
         if (isInFrontOfClimbingWall)
         {
             Gizmos.color = Color.green;
+            Gizmos.DrawLine(_climbDetector.position, _climbDetector.position + (_climbDetector.forward * _climbCheckDistance));
         }
 
-        Gizmos.DrawLine(_climbDetector.position, _climbDetector.position + (_climbDetector.forward * _climbCheckDistance));
+         if (isInLeftClimbBorder)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(_leftClimbBorder.position, _leftClimbBorder.position + (_leftClimbBorder.forward * _climbCheckDistance));
+        }
+
+        if (isInRightClimbBorder)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(_rightClimbBorder.position, _rightClimbBorder.position + (_rightClimbBorder.forward * _climbCheckDistance));
+        }
+
+        if (isInUpperClimbBorder)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(_upperClimbBorder.position, _upperClimbBorder.position + (_upperClimbBorder.forward * _climbCheckDistance));
+        }
+
+        if (isInLowerClimbBorder)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(_lowerClimbBorder.position, _lowerClimbBorder.position + (_lowerClimbBorder.forward * _climbCheckDistance));
+        }
         
     }
 }
