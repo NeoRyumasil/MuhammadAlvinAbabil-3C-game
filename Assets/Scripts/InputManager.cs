@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
     public Action OnJumpInput;
     public Action OnClimbInput;
     public Action OnCancelClimbInput;
+    public Action OnChangePOVInput;
 
     // Start is called before the first frame update
     void Start()
@@ -99,7 +100,10 @@ public class InputManager : MonoBehaviour
 
         if (isPressChangePOVInput)
         {
-            Debug.Log("Change POV");
+            if (OnChangePOVInput != null)
+            {
+                OnChangePOVInput();
+            }
         }
     }
 

@@ -236,6 +236,10 @@ public class PlayerMovement : MonoBehaviour
             // Set FPS Clamped Camera
             _cameraManager.setFPSClampedCamera(true, transform.rotation.eulerAngles);
 
+            // Set FOV TPS Camera
+            _cameraManager.SetTPSFieldOfView(70f);
+
+            // Set Player Position and Rotation saat Memanjat
             Vector3 offset = (transform.forward * _climbOffset.z) + (Vector3.up * _climbOffset.y);
             transform.position = hit.point - offset;
             transform.rotation = Quaternion.LookRotation(-hit.normal, Vector3.up);
@@ -252,6 +256,10 @@ public class PlayerMovement : MonoBehaviour
             // Set FPS Clamped Camera
             _cameraManager.setFPSClampedCamera(false, transform.rotation.eulerAngles);
 
+            // Set FOV TPS Camera
+            _cameraManager.SetTPSFieldOfView(40f);
+
+            // Set Player Stance dan Posisi saat Berhenti Memanjat
             _playerStance = PlayerStance.Stand;
             _rigidbody.useGravity = true;
             transform.position -= transform.forward * 1f;

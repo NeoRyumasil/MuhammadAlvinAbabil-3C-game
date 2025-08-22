@@ -9,8 +9,22 @@ public class CameraManager : MonoBehaviour
     // Game Object References
     [SerializeField] public CameraState CameraState;
     [SerializeField] private CinemachineVirtualCamera _fpsCamera;
+    [SerializeField] private CinemachineFreeLook _tpsCamera;
+    [SerializeField] private InputManager _inputManager;
 
-    // Clamped Camera untuk FPS
+    // Start is called before the first frame update
+    private void Start()
+    {
+        _inputManager.OnChangePOVInput += SwitchCamera;
+    }
+
+    // OnDestroy untuk menghapus event listener
+    private void OnDestroy()
+    {
+        _inputManager.OnChangePOVInput -= SwitchCamera;
+    }
+
+    // Nahan rotasi camera FPS
     public void setFPSClampedCamera(bool isClamped, Vector3 playerRotation)
     {
         CinemachinePOV pov = _fpsCamera.GetCinemachineComponent<CinemachinePOV>();
@@ -27,5 +41,27 @@ public class CameraManager : MonoBehaviour
             pov.m_HorizontalAxis.m_MaxValue = 180;
             pov.m_HorizontalAxis.m_Wrap = true;
         }
+    }
+
+    // Switch camera state
+    private void SwitchCamera()
+    {
+        if (CameraState == CameraState.ThirdPerson)
+        {
+            CameraState = CameraState.FirstPerson;
+            _tpsCamera.gameObject.SetActive(false);
+            _fpsCamera.gameObject.SetActive(true);
+        }
+        else
+        {
+            CameraState = CameraState.ThirdPerson;
+            _tpsCamera.gameObject.SetActive(true);
+            _fpsCamera.gameObject.SetActive(false);}
+    }
+
+    // Set FOV TPS Camera
+    public void SetTPSFieldOfView(float fov)
+    {
+        _tpsCamera.m_Lens.FieldOfView = fov;
     }
 }
