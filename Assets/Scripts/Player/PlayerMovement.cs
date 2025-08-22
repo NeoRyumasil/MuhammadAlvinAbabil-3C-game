@@ -52,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private CameraManager _cameraManager;
 
+    private Animator _animator;
 
     // Components References
     private Rigidbody _rigidbody;
@@ -75,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Game Object References
         _rigidbody = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
 
         // Attributes
         _speed = _walkSpeed;
@@ -116,11 +118,16 @@ public class PlayerMovement : MonoBehaviour
             case CameraState.ThirdPerson:
                 if (axisDirection.magnitude >= 0.1f)
                 {
+                    // Pergerakan Player
                     float rotationAngle = Mathf.Atan2(axisDirection.x, axisDirection.y) * Mathf.Rad2Deg + _cameraTransform.eulerAngles.y;
                     float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationAngle, ref _rotationSmoothVelocity, _rotationSmoothTime);
                     transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
                     movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
                     _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange);
+
+                    // Animmasi Player
+                    Vector3 velocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
+                    _animator.SetFloat("Velocity", velocity.magnitude * axisDirection.magnitude * 0.15f);
                 }
                 break;
 
