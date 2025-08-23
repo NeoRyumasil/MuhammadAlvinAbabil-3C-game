@@ -15,6 +15,7 @@ public class InputManager : MonoBehaviour
     public Action OnCrouchInput;
     public Action OnGlideInput;
     public Action OnCandelGlideInput;
+    public Action OnPunchInput;
 
     // Start is called before the first frame update
     void Start()
@@ -158,7 +159,7 @@ public class InputManager : MonoBehaviour
 
         if (isPressPunchInput)
         {
-            Debug.Log("Punch");
+            OnPunchInput();
         }
     }
 

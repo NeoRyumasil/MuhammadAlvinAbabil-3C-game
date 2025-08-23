@@ -49,6 +49,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _maxGlideRotationX;
     [SerializeField] private Vector3 _glideRotationSpeed;
     
+    // Player Attack
+    private bool _isPunching;
+    private int _combo = 0;
+
     // Game Object References
     [Header("Game Object References")]
     [SerializeField] private InputManager _input;
@@ -79,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnCrouchInput += Crouch;
         _input.OnGlideInput += StartGlide;
         _input.OnCandelGlideInput += CancelGlide;
+        _input.OnPunchInput += Punch;
 
         // Camera Manager
         _cameraManager.OnChangePerspective += OnChangePerspective;
@@ -126,6 +131,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnCrouchInput -= Crouch;
         _input.OnGlideInput -= StartGlide;
         _input.OnCandelGlideInput -= CancelGlide;
+        _input.OnPunchInput -= Punch;
 
         // Camera Manager
         _cameraManager.OnChangePerspective -= OnChangePerspective;
@@ -423,6 +429,37 @@ public class PlayerMovement : MonoBehaviour
             // Set Animation
             _animator.SetBool("IsGliding", false);
         }
+    }
+
+    // Player Tonjok
+    private void Punch()
+    {
+
+        if (!_isPunching && _playerStance == PlayerStance.Stand)
+        {
+            _isPunching = true;
+        
+            // Combo
+            if (_combo < 3)
+            {
+                _combo++;
+            }
+            else 
+            {
+                _combo = 1;
+            }   
+
+            // Animasi Tonjok
+            _animator.SetInteger("Combo", _combo);
+            _animator.SetTrigger("Punch");
+        }
+    }
+
+    // Berhenti Tonjok
+    private void EndPunch()
+    {
+        _isPunching = false;
+        _animator.ResetTrigger("Punch");
     }
 
     // Menghapus dan mengunci kursor
