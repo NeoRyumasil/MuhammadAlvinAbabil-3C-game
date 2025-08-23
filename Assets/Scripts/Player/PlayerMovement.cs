@@ -199,6 +199,11 @@ public class PlayerMovement : MonoBehaviour
             Vector3 vertical = axisDirection.y * transform.up;
             movementDirection = horizontal + vertical;
             _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime, ForceMode.VelocityChange);
+
+            // Animasi Player Memanjat
+            Vector3 velocity = new Vector3(_rigidbody.velocity.x, _rigidbody.velocity.y, 0f);
+            _animator.SetFloat("ClimbVelocityY", velocity.magnitude * axisDirection.y);
+            _animator.SetFloat("ClimbVelocityX", velocity.magnitude * axisDirection.x);
         }
     }
     
@@ -296,12 +301,18 @@ public class PlayerMovement : MonoBehaviour
             // Set FOV TPS Camera
             _cameraManager.SetTPSFieldOfView(70f);
 
+            // Set Collider
+            _collider.center = Vector3.up * 1.3f;
+
             // Set Player Position and Rotation saat Memanjat
             Vector3 offset = (transform.forward * _climbOffset.z) + (Vector3.up * _climbOffset.y);
             transform.position = hit.point - offset;
             transform.rotation = Quaternion.LookRotation(-hit.normal, Vector3.up);
             _playerStance = PlayerStance.Climb;
             _rigidbody.useGravity = false;
+
+            // Set Animasi Climb
+            _animator.SetBool("IsClimb", true);
         }
     }
 
@@ -316,10 +327,16 @@ public class PlayerMovement : MonoBehaviour
             // Set FOV TPS Camera
             _cameraManager.SetTPSFieldOfView(40f);
 
+            // Set Collider
+            _collider.center = Vector3.up * 0.9f;
+
             // Set Player Stance dan Posisi saat Berhenti Memanjat
             _playerStance = PlayerStance.Stand;
             _rigidbody.useGravity = true;
             transform.position -= transform.forward * 1f;
+
+            // Set Animasi Climb
+            _animator.SetBool("IsClimb", false);
         }
     }
 

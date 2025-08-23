@@ -4037,7 +4037,7 @@ MonoBehaviour:
   _speed: 0
   _jumpForce: 5
   _climbSpeed: 5
-  _crouchSpeed: 5
+  _crouchSpeed: 10
   _rotationSmoothTime: 0.1
   _rotationSmoothVelocity: 0
   _walkSprintTransition: 30
