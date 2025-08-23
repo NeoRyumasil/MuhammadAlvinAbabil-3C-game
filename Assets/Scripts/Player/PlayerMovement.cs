@@ -222,6 +222,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 jumpDirection = Vector3.up;
             _rigidbody.AddForce(jumpDirection * _jumpForce, ForceMode.Impulse);
+            _animator.SetTrigger("Jump");
         }
     }
 
@@ -229,6 +230,7 @@ public class PlayerMovement : MonoBehaviour
     private void CheckIsGrounded()
     {
         _isGrounded = Physics.CheckSphere(_groundDetector.position, _detectorRadius, _groundLayer);
+        _animator.SetBool("IsGrounded", _isGrounded);
     }
 
     // Stair Climb Step Checker
