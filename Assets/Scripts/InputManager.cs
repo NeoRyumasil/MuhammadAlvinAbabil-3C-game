@@ -12,6 +12,7 @@ public class InputManager : MonoBehaviour
     public Action OnClimbInput;
     public Action OnCancelClimbInput;
     public Action OnChangePOVInput;
+    public Action OnCrouchInput;
 
     // Start is called before the first frame update
     void Start()
@@ -89,7 +90,7 @@ public class InputManager : MonoBehaviour
 
         if (isPressCrouchInput)
         {
-            Debug.Log("Crouch");
+            OnCrouchInput();
         }
     }
 

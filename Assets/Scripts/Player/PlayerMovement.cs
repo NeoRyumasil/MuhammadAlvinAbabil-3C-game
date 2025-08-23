@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce = 5f;
     [SerializeField] private float _climbSpeed = 5f;
+    [SerializeField] private float _crouchSpeed = 5f;
     private PlayerStance _playerStance;
 
     // Player Rotation
@@ -53,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private CameraManager _cameraManager;
 
     private Animator _animator;
+    private CapsuleCollider _collider;
 
     // Components References
     private Rigidbody _rigidbody;
@@ -66,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnJumpInput += Jump;
         _input.OnClimbInput += StartClimb;
         _input.OnCancelClimbInput += CancelClimb;
+        _input.OnCrouchInput += Crouch;
 
         // Camera Manager
         _cameraManager.OnChangePerspective += OnChangePerspective;
@@ -81,6 +84,7 @@ public class PlayerMovement : MonoBehaviour
         // Game Object References
         _rigidbody = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
+        _collider = GetComponent<CapsuleCollider>();
 
         // Attributes
         _speed = _walkSpeed;
@@ -105,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         _input.OnJumpInput -= Jump;
         _input.OnClimbInput -= StartClimb;
         _input.OnCancelClimbInput -= CancelClimb;
+        _input.OnCrouchInput -= Crouch;
 
         // Camera Manager
         _cameraManager.OnChangePerspective -= OnChangePerspective;
@@ -116,9 +121,10 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementDirection = Vector3.zero;
         bool isPlayerStanding = _playerStance == PlayerStance.Stand;
         bool isPlayerClimbing = _playerStance == PlayerStance.Climb;
+        bool isPlayerCrouching = _playerStance == PlayerStance.Crouch;
 
         // Pergerakan Player Berdiri
-        if (isPlayerStanding)
+        if (isPlayerStanding || isPlayerCrouching)
         {
 
             // Animasi Player
@@ -223,6 +229,37 @@ public class PlayerMovement : MonoBehaviour
             Vector3 jumpDirection = Vector3.up;
             _rigidbody.AddForce(jumpDirection * _jumpForce, ForceMode.Impulse);
             _animator.SetTrigger("Jump");
+        }
+    }
+
+    // Player Crouch
+    private void Crouch()
+    {
+        if (_playerStance == PlayerStance.Stand)
+        {
+            // Set Stance and Speed
+            _playerStance = PlayerStance.Crouch;
+            _speed = _crouchSpeed;
+
+            // Set Collider Height and Center
+            _collider.height = 1.3f;
+            _collider.center = Vector3.up * 0.66f;
+
+            // Set Animasi Crouch
+            _animator.SetBool("IsCrouch", true);
+        }
+        else if (_playerStance == PlayerStance.Crouch)
+        {
+            // Set Stance and Speed
+            _playerStance = PlayerStance.Stand;
+            _speed = _walkSpeed;
+
+            // Set Collider Height and Center
+            _collider.height = 1.8f;
+            _collider.center = Vector3.up * 0.9f;
+
+            // Set Animasi Crouch
+            _animator.SetBool("IsCrouch", false);
         }
     }
 
