@@ -41,6 +41,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask _climbableLayer;
     [SerializeField] private Vector3 _climbOffset;
 
+    // Player Glide
+    [Header("Player Glide")]
+    [SerializeField] private float _glideSpeed = 5f;
+    [SerializeField] private float _airDrag = 5f;
+    [SerializeField] private float _minGlideRotationX;
+    [SerializeField] private float _maxGlideRotationX;
+    [SerializeField] private Vector3 _glideRotationSpeed;
+    
     // Game Object References
     [Header("Game Object References")]
     [SerializeField] private InputManager _input;
@@ -69,6 +77,8 @@ public class PlayerMovement : MonoBehaviour
         _input.OnClimbInput += StartClimb;
         _input.OnCancelClimbInput += CancelClimb;
         _input.OnCrouchInput += Crouch;
+        _input.OnGlideInput += StartGlide;
+        _input.OnCandelGlideInput += CancelGlide;
 
         // Camera Manager
         _cameraManager.OnChangePerspective += OnChangePerspective;
@@ -96,6 +106,10 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Action
+        Glide();
+
+        // Checker
         CheckIsGrounded();
         CheckStep();
     }
@@ -110,6 +124,8 @@ public class PlayerMovement : MonoBehaviour
         _input.OnClimbInput -= StartClimb;
         _input.OnCancelClimbInput -= CancelClimb;
         _input.OnCrouchInput -= Crouch;
+        _input.OnGlideInput -= StartGlide;
+        _input.OnCandelGlideInput -= CancelGlide;
 
         // Camera Manager
         _cameraManager.OnChangePerspective -= OnChangePerspective;
@@ -118,10 +134,14 @@ public class PlayerMovement : MonoBehaviour
     // Pergerakan Player
     private void Move(Vector2 axisDirection)
     {
+        // Movement Attributes
         Vector3 movementDirection = Vector3.zero;
+
+        // Stance Attributes
         bool isPlayerStanding = _playerStance == PlayerStance.Stand;
         bool isPlayerClimbing = _playerStance == PlayerStance.Climb;
         bool isPlayerCrouching = _playerStance == PlayerStance.Crouch;
+        bool isPlayerGliding = _playerStance == PlayerStance.Glide;
 
         // Pergerakan Player Berdiri
         if (isPlayerStanding || isPlayerCrouching)
@@ -205,6 +225,18 @@ public class PlayerMovement : MonoBehaviour
             _animator.SetFloat("ClimbVelocityY", velocity.magnitude * axisDirection.y);
             _animator.SetFloat("ClimbVelocityX", velocity.magnitude * axisDirection.x);
         }
+
+        // Pergerakan Player Glide
+        else if (isPlayerGliding)
+        {
+            // Rotasi Player
+            Vector3 rotationDegree = transform.rotation.eulerAngles;
+            rotationDegree.x += _glideRotationSpeed.x * axisDirection.y * Time.deltaTime;
+            rotationDegree.x = Mathf.Clamp(rotationDegree.x, _minGlideRotationX, _maxGlideRotationX);
+            rotationDegree.z += _glideRotationSpeed.z * axisDirection.x * Time.deltaTime;
+            rotationDegree.y += _glideRotationSpeed.y * axisDirection.x * Time.deltaTime;
+            transform.rotation = Quaternion.Euler(rotationDegree);
+        }
     }
     
     // Player Sprint
@@ -268,11 +300,32 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // Glide
+    private void Glide()
+    {
+        // Plauer Rotation
+        Vector3 playerRotation = transform.rotation.eulerAngles;
+        float lift = playerRotation.x;
+        
+        // Force
+        Vector3 upForce = transform.up * (lift + _airDrag);
+        Vector3 forwardForce = transform.forward * _glideSpeed;
+        Vector3 totalForce = upForce + forwardForce;
+
+        // Pergerakan Glide
+        _rigidbody.AddForce(totalForce * Time.deltaTime, ForceMode.Force);
+    }
+
     // Grounded Checker
     private void CheckIsGrounded()
     {
         _isGrounded = Physics.CheckSphere(_groundDetector.position, _detectorRadius, _groundLayer);
         _animator.SetBool("IsGrounded", _isGrounded);
+
+        if (_isGrounded)
+        {
+            CancelGlide();
+        }
     }
 
     // Stair Climb Step Checker
@@ -337,6 +390,38 @@ public class PlayerMovement : MonoBehaviour
 
             // Set Animasi Climb
             _animator.SetBool("IsClimb", false);
+        }
+    }
+
+    // Player Glide
+    private void StartGlide()
+    {
+        if (_playerStance != PlayerStance.Glide && !_isGrounded)
+        {
+            // Set Stance
+            _playerStance = PlayerStance.Glide;
+
+            // Set Clamped Camera
+            _cameraManager.setFPSClampedCamera(true, transform.rotation.eulerAngles);
+
+            // Set Animation
+            _animator.SetBool("IsGliding", true);
+        }
+    }
+
+    // Player Cancel Glide
+    private void CancelGlide()
+    {
+        if (_playerStance == PlayerStance.Glide)
+        {
+            // Set Stance
+            _playerStance = PlayerStance.Stand;
+
+            // Set Clamped Camera
+            _cameraManager.setFPSClampedCamera(false, transform.rotation.eulerAngles);
+
+            // Set Animation
+            _animator.SetBool("IsGliding", false);
         }
     }
 

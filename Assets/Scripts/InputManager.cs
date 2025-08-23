@@ -13,6 +13,8 @@ public class InputManager : MonoBehaviour
     public Action OnCancelClimbInput;
     public Action OnChangePOVInput;
     public Action OnCrouchInput;
+    public Action OnGlideInput;
+    public Action OnCandelGlideInput;
 
     // Start is called before the first frame update
     void Start()
@@ -126,11 +128,11 @@ public class InputManager : MonoBehaviour
 
         if (isPressGlideInput)
         {
-            Debug.Log("Glide");
+            OnGlideInput();
         }
     }
 
-    // Check Input Cancel
+    // Check Input Cancel 
     private void CheckCancelInput()
     {
         bool isPressCancelInput = Input.GetKeyDown(KeyCode.C);
@@ -140,6 +142,11 @@ public class InputManager : MonoBehaviour
             if (OnCancelClimbInput != null)
             {
                 OnCancelClimbInput();
+            }
+
+            if (OnCandelGlideInput != null)
+            {
+                OnCandelGlideInput();
             }
         }
     }
