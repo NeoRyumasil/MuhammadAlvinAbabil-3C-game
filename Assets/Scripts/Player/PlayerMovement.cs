@@ -60,11 +60,15 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Input Manager
         _input.OnMoveInput += Move;
         _input.OnSprintInput += Sprint;
         _input.OnJumpInput += Jump;
         _input.OnClimbInput += StartClimb;
         _input.OnCancelClimbInput += CancelClimb;
+
+        // Camera Manager
+        _cameraManager.OnChangePerspective += OnChangePerspective;
     }
 
 
@@ -95,11 +99,15 @@ public class PlayerMovement : MonoBehaviour
     // Menghapus event listener untuk menghindari memory leak
     private void OnDestroy()
     {
+        // Input Manager
         _input.OnMoveInput -= Move;
         _input.OnSprintInput -= Sprint;
         _input.OnJumpInput -= Jump;
         _input.OnClimbInput -= StartClimb;
         _input.OnCancelClimbInput -= CancelClimb;
+
+        // Camera Manager
+        _cameraManager.OnChangePerspective -= OnChangePerspective;
     }
 
     // Pergerakan Player
@@ -112,6 +120,13 @@ public class PlayerMovement : MonoBehaviour
         // Pergerakan Player Berdiri
         if (isPlayerStanding)
         {
+
+            // Animasi Player
+            Vector3 velocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
+            _animator.SetFloat("Velocity", velocity.magnitude * axisDirection.magnitude * 0.15f);
+            _animator.SetFloat("VelocityZ", axisDirection.y * velocity.magnitude * 0.15f);
+            _animator.SetFloat("VelocityX", axisDirection.x * velocity.magnitude * 0.15f);
+
             // Setting TPS dan FPS Camera
             switch (_cameraManager.CameraState)
             {
@@ -124,23 +139,19 @@ public class PlayerMovement : MonoBehaviour
                     transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
                     movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
                     _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange);
-
-                    // Animmasi Player
-                    Vector3 velocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
-                    _animator.SetFloat("Velocity", velocity.magnitude * axisDirection.magnitude * 0.15f);
                 }
                 break;
 
-                case CameraState.FirstPerson:
-                    transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
-                    Vector3 verticalDirection = axisDirection.y * transform.forward;
-                    Vector3 horizontalDirection = axisDirection.x * transform.right;
-                    movementDirection = verticalDirection + horizontalDirection;
-                    _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange); 
-                    break;
-                    
-                default:
-                    break;
+            case CameraState.FirstPerson:
+                transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
+                Vector3 verticalDirection = axisDirection.y * transform.forward;
+                Vector3 horizontalDirection = axisDirection.x * transform.right;
+                movementDirection = verticalDirection + horizontalDirection;
+                _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange); 
+                break;
+                
+            default:
+                break;
             }
         }
         
@@ -278,6 +289,12 @@ public class PlayerMovement : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    // Change Perspective 
+    private void OnChangePerspective()
+    {
+        _animator.SetTrigger("ChangePerspective");
     }
     
     // Gizmos
