@@ -50,8 +50,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector3 _glideRotationSpeed;
     
     // Player Attack
+    [Header("Player Attack")]
     private bool _isPunching;
     private int _combo = 0;
+    private Coroutine _resetCombo;
+    [SerializeField] private float _resetComboInterval;
+    [SerializeField] private float _hitDetectorRadius;
+    [SerializeField] private LayerMask _hitLayer;
 
     // Game Object References
     [Header("Game Object References")]
@@ -63,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform _upperClimbBorder;
     [SerializeField] private Transform _lowerClimbBorder;
     [SerializeField] private Transform _cameraTransform;
+    [SerializeField] private Transform _hitDetector;
     [SerializeField] private CameraManager _cameraManager;
 
     private Animator _animator;
@@ -150,7 +156,7 @@ public class PlayerMovement : MonoBehaviour
         bool isPlayerGliding = _playerStance == PlayerStance.Glide;
 
         // Pergerakan Player Berdiri
-        if (isPlayerStanding || isPlayerCrouching)
+        if ((isPlayerStanding || isPlayerCrouching) && !_isPunching) 
         {
 
             // Animasi Player
@@ -322,6 +328,22 @@ public class PlayerMovement : MonoBehaviour
         _rigidbody.AddForce(totalForce * Time.deltaTime, ForceMode.Force);
     }
 
+    // Player Hit
+    private void Hit()
+    {
+        // Sphere Collider
+        Collider[] hitObjects = Physics.OverlapSphere(_hitDetector.position, _hitDetectorRadius, _hitLayer);
+
+        // Destroy Objects
+        for (int i = 0; i < hitObjects.Length; i++)
+        {
+            if (hitObjects[i].gameObject != null)
+            {
+                Destroy(hitObjects[i].gameObject);
+            }
+        }
+    }
+
     // Grounded Checker
     private void CheckIsGrounded()
     {
@@ -457,8 +479,19 @@ public class PlayerMovement : MonoBehaviour
 
     // Berhenti Tonjok
     private void EndPunch()
-    {
+    {   
+        // Set Attribute
         _isPunching = false;
+
+        // Reset Combo
+        if (_resetCombo != null)
+        {
+            StopCoroutine(_resetCombo);
+        }
+
+        _resetCombo = StartCoroutine(ResetCombo());
+
+        // Reset Animasi
         _animator.ResetTrigger("Punch");
     }
 
@@ -473,6 +506,13 @@ public class PlayerMovement : MonoBehaviour
     private void OnChangePerspective()
     {
         _animator.SetTrigger("ChangePerspective");
+    }
+
+    // Reset Combo
+    private IEnumerator ResetCombo()
+    {
+        yield return new WaitForSeconds(_resetComboInterval);
+        _combo = 0;    
     }
     
     // Gizmos
