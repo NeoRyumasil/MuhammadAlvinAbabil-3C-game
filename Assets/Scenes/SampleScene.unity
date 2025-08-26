@@ -1761,6 +1761,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1799561490
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1799561491}
+  m_Layer: 0
+  m_Name: HitDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1799561491
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799561490}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.2, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1609463264412899930}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1911895637
 GameObject:
   m_ObjectHideFlags: 0
@@ -3730,6 +3761,7 @@ Transform:
   - {fileID: 2096283335}
   - {fileID: 323453215}
   - {fileID: 1911895638}
+  - {fileID: 1799561491}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1618271132537789093
@@ -4176,7 +4208,7 @@ MonoBehaviour:
   _upperClimbBorder: {fileID: 2143549164}
   _lowerClimbBorder: {fileID: 584052651}
   _cameraTransform: {fileID: 330585546}
-  _hitDetector: {fileID: 0}
+  _hitDetector: {fileID: 1799561491}
   _cameraManager: {fileID: 1675068924}
 --- !u!136 &2098157234158518498
 CapsuleCollider:
