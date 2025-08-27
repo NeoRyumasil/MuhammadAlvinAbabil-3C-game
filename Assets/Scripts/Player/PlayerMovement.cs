@@ -70,6 +70,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private Transform _hitDetector;
     [SerializeField] private CameraManager _cameraManager;
+    [SerializeField] private PlayerAudioManager _playerAudioManager;
 
     private Animator _animator;
     private CapsuleCollider _collider;
@@ -434,6 +435,9 @@ public class PlayerMovement : MonoBehaviour
 
             // Set Animation
             _animator.SetBool("IsGliding", true);
+
+            // Set SFX
+            _playerAudioManager.PlayGlideSFX();
         }
     }
 
@@ -450,6 +454,9 @@ public class PlayerMovement : MonoBehaviour
 
             // Set Animation
             _animator.SetBool("IsGliding", false);
+
+            // Set SFX
+            _playerAudioManager.StopGlideSFX();
         }
     }
 
@@ -474,6 +481,9 @@ public class PlayerMovement : MonoBehaviour
             // Animasi Tonjok
             _animator.SetInteger("Combo", _combo);
             _animator.SetTrigger("Punch");
+
+            // SFX Tonjok
+            _playerAudioManager.PlayPunchSFX();
         }
     }
 
