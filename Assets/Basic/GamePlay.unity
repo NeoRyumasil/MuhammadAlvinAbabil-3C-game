@@ -9706,7 +9706,7 @@ MonoBehaviour:
     m_Bits: 8
   _upperStepOffset: {x: 0, y: 0.3, z: 0.3}
   _stepCheckerDistance: 0.1
-  _stepForce: 0.1
+  _stepForce: 0.2
   _climbCheckDistance: 1
   _climbableLayer:
     serializedVersion: 2
