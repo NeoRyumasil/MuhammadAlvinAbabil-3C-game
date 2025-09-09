@@ -274,11 +274,12 @@ public class PlayerMovement : MonoBehaviour
     // Player Jump
     private void Jump()
     {
-        if (_isGrounded)
+        if (_isGrounded && !_isPunching)
         {
             Vector3 jumpDirection = Vector3.up;
             _rigidbody.AddForce(jumpDirection * _jumpForce, ForceMode.Impulse);
-            _animator.SetTrigger("Jump");
+            _animator.SetBool("isJump", true);
+            _animator.SetBool("isJump", false);
         }
     }
 
@@ -464,7 +465,7 @@ public class PlayerMovement : MonoBehaviour
     private void Punch()
     {
 
-        if (!_isPunching && _playerStance == PlayerStance.Stand)
+        if (!_isPunching && _playerStance == PlayerStance.Stand && _isGrounded)
         {
             _isPunching = true;
         
