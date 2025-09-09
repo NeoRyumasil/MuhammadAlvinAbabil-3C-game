@@ -286,6 +286,9 @@ public class PlayerMovement : MonoBehaviour
     // Player Crouch
     private void Crouch()
     {
+        Vector3 checkerUpPosition = transform.position + Vector3.up * 1.4f;
+        bool isCanStandUp = !Physics.Raycast(checkerUpPosition, transform.up, 0.25f, _groundLayer);
+
         if (_playerStance == PlayerStance.Stand)
         {
             // Set Stance and Speed
@@ -299,7 +302,7 @@ public class PlayerMovement : MonoBehaviour
             // Set Animasi Crouch
             _animator.SetBool("IsCrouch", true);
         }
-        else if (_playerStance == PlayerStance.Crouch)
+        else if (_playerStance == PlayerStance.Crouch && isCanStandUp)
         {
             // Set Stance and Speed
             _playerStance = PlayerStance.Stand;
