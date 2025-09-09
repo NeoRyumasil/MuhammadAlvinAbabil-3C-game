@@ -1340,7 +1340,8 @@ BlendTree:
   m_Name: ThirdPersonMovement
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 302ea129372c78c479c6248b2dd20186, type: 2}
+    m_Motion: {fileID: -203655887218126122, guid: e8396199865b10d4691bea2d5088fbaa,
+      type: 3}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
