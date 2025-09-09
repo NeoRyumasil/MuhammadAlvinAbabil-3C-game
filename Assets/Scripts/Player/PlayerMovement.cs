@@ -48,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _minGlideRotationX;
     [SerializeField] private float _maxGlideRotationX;
     [SerializeField] private Vector3 _glideRotationSpeed;
+     Vector3 rotationDegree = Vector3.zero;
     
     // Player Attack
     [Header("Player Attack")]
@@ -243,7 +244,6 @@ public class PlayerMovement : MonoBehaviour
         else if (isPlayerGliding)
         {
             // Rotasi Player
-            Vector3 rotationDegree = transform.rotation.eulerAngles;
             rotationDegree.x += _glideRotationSpeed.x * axisDirection.y * Time.deltaTime;
             rotationDegree.x = Mathf.Clamp(rotationDegree.x, _minGlideRotationX, _maxGlideRotationX);
             rotationDegree.z += _glideRotationSpeed.z * axisDirection.x * Time.deltaTime;
@@ -274,17 +274,21 @@ public class PlayerMovement : MonoBehaviour
     // Player Jump
     private void Jump()
     {
-        if (_isGrounded)
+        if (_isGrounded && !_isPunching)
         {
             Vector3 jumpDirection = Vector3.up;
             _rigidbody.AddForce(jumpDirection * _jumpForce, ForceMode.Impulse);
-            _animator.SetTrigger("Jump");
+            _animator.SetBool("isJump", true);
+            _animator.SetBool("isJump", false);
         }
     }
 
     // Player Crouch
     private void Crouch()
     {
+        Vector3 checkerUpPosition = transform.position + Vector3.up * 1.4f;
+        bool isCanStandUp = !Physics.Raycast(checkerUpPosition, transform.up, 0.25f, _groundLayer);
+
         if (_playerStance == PlayerStance.Stand)
         {
             // Set Stance and Speed
@@ -298,7 +302,7 @@ public class PlayerMovement : MonoBehaviour
             // Set Animasi Crouch
             _animator.SetBool("IsCrouch", true);
         }
-        else if (_playerStance == PlayerStance.Crouch)
+        else if (_playerStance == PlayerStance.Crouch && isCanStandUp)
         {
             // Set Stance and Speed
             _playerStance = PlayerStance.Stand;
@@ -427,6 +431,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_playerStance != PlayerStance.Glide && !_isGrounded)
         {
+            // Set Rotation Degree
+            rotationDegree = transform.rotation.eulerAngles;
+
             // Set Stance
             _playerStance = PlayerStance.Glide;
 
@@ -464,7 +471,7 @@ public class PlayerMovement : MonoBehaviour
     private void Punch()
     {
 
-        if (!_isPunching && _playerStance == PlayerStance.Stand)
+        if (!_isPunching && _playerStance == PlayerStance.Stand && _isGrounded)
         {
             _isPunching = true;
         
