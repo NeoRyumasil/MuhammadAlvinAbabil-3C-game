@@ -48,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _minGlideRotationX;
     [SerializeField] private float _maxGlideRotationX;
     [SerializeField] private Vector3 _glideRotationSpeed;
+     Vector3 rotationDegree = Vector3.zero;
     
     // Player Attack
     [Header("Player Attack")]
@@ -243,7 +244,6 @@ public class PlayerMovement : MonoBehaviour
         else if (isPlayerGliding)
         {
             // Rotasi Player
-            Vector3 rotationDegree = transform.rotation.eulerAngles;
             rotationDegree.x += _glideRotationSpeed.x * axisDirection.y * Time.deltaTime;
             rotationDegree.x = Mathf.Clamp(rotationDegree.x, _minGlideRotationX, _maxGlideRotationX);
             rotationDegree.z += _glideRotationSpeed.z * axisDirection.x * Time.deltaTime;
@@ -428,6 +428,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_playerStance != PlayerStance.Glide && !_isGrounded)
         {
+            // Set Rotation Degree
+            rotationDegree = transform.rotation.eulerAngles;
+
             // Set Stance
             _playerStance = PlayerStance.Glide;
 
