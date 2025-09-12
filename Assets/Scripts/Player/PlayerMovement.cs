@@ -178,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
                     float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationAngle, ref _rotationSmoothVelocity, _rotationSmoothTime);
                     transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
                     movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
-                    _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange);
+                    _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime);
                 }
                 break;
 
@@ -187,7 +187,7 @@ public class PlayerMovement : MonoBehaviour
                 Vector3 verticalDirection = axisDirection.y * transform.forward;
                 Vector3 horizontalDirection = axisDirection.x * transform.right;
                 movementDirection = verticalDirection + horizontalDirection;
-                _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange); 
+                _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime); 
                 break;
                 
             default:
@@ -232,7 +232,7 @@ public class PlayerMovement : MonoBehaviour
             Vector3 horizontal = axisDirection.x * transform.right;
             Vector3 vertical = axisDirection.y * transform.up;
             movementDirection = horizontal + vertical;
-            _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime, ForceMode.VelocityChange);
+            _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime);
 
             // Animasi Player Memanjat
             Vector3 velocity = new Vector3(_rigidbody.velocity.x, _rigidbody.velocity.y, 0f);
@@ -278,8 +278,8 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 jumpDirection = Vector3.up;
             _rigidbody.AddForce(jumpDirection * _jumpForce, ForceMode.Impulse);
-            _animator.SetBool("isJump", true);
-            _animator.SetBool("isJump", false);
+            _animator.SetBool("IsJump", true);
+            _animator.SetBool("IsJump", false);
         }
     }
 
