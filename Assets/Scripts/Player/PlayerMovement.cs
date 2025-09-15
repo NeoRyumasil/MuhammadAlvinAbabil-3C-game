@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _detectorRadius = 0.2f;
     [SerializeField] private LayerMask _groundLayer;
     private bool _isGrounded;
+    private bool _isJump = false;
 
     // Player Stair Climb
     [Header("Player Stair Climb")]
@@ -125,6 +126,7 @@ public class PlayerMovement : MonoBehaviour
         // Checker
         CheckIsGrounded();
         CheckStep();
+
     }
 
     // Menghapus event listener untuk menghindari memory leak
@@ -171,23 +173,43 @@ public class PlayerMovement : MonoBehaviour
             switch (_cameraManager.CameraState)
             {
             case CameraState.ThirdPerson:
-                if (axisDirection.magnitude >= 0.1f)
-                {
-                    // Pergerakan Player
-                    float rotationAngle = Mathf.Atan2(axisDirection.x, axisDirection.y) * Mathf.Rad2Deg + _cameraTransform.eulerAngles.y;
-                    float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationAngle, ref _rotationSmoothVelocity, _rotationSmoothTime);
-                    transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
-                    movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
-                    _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime);
-                }
+                    if (axisDirection.magnitude >= 0.1f)
+                    {
+                        // Pergerakan Player
+                        float rotationAngle = Mathf.Atan2(axisDirection.x, axisDirection.y) * Mathf.Rad2Deg + _cameraTransform.eulerAngles.y;
+                        float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationAngle, ref _rotationSmoothVelocity, _rotationSmoothTime);
+                        transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
+                        movementDirection = Quaternion.Euler(0f, rotationAngle, 0f) * Vector3.forward;
+                        _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange);
+                    }
+                    else
+                    {
+                        if (_isGrounded && !_isJump)
+                        {
+                            _rigidbody.velocity = Vector3.zero;
+                        }
+                    }
                 break;
 
             case CameraState.FirstPerson:
-                transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
-                Vector3 verticalDirection = axisDirection.y * transform.forward;
-                Vector3 horizontalDirection = axisDirection.x * transform.right;
-                movementDirection = verticalDirection + horizontalDirection;
-                _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime); 
+                if (axisDirection.magnitude >= 0.1f)
+                {
+                    transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
+                    Vector3 verticalDirection = axisDirection.y * transform.forward;
+                    Vector3 horizontalDirection = axisDirection.x * transform.right;
+                    movementDirection = verticalDirection + horizontalDirection;
+                    _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange); 
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
+                    
+                    if (_isGrounded && !_isJump)
+                        {
+                            _rigidbody.velocity = Vector3.zero;
+                        }
+                }
+                
                 break;
                 
             default:
@@ -232,7 +254,7 @@ public class PlayerMovement : MonoBehaviour
             Vector3 horizontal = axisDirection.x * transform.right;
             Vector3 vertical = axisDirection.y * transform.up;
             movementDirection = horizontal + vertical;
-            _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime);
+            _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime, ForceMode.VelocityChange);
 
             // Animasi Player Memanjat
             Vector3 velocity = new Vector3(_rigidbody.velocity.x, _rigidbody.velocity.y, 0f);
@@ -276,6 +298,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_isGrounded && !_isPunching)
         {
+            _isJump = true;
             Vector3 jumpDirection = Vector3.up;
             _rigidbody.AddForce(jumpDirection * _jumpForce, ForceMode.Impulse);
             _animator.SetBool("IsJump", true);
