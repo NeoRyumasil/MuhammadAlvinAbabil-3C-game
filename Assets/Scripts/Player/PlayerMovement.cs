@@ -160,7 +160,7 @@ public class PlayerMovement : MonoBehaviour
         bool isPlayerGliding = _playerStance == PlayerStance.Glide;
 
         // Pergerakan Player Berdiri
-        if ((isPlayerStanding || isPlayerCrouching) && !_isPunching) 
+        if ((isPlayerStanding || isPlayerCrouching) && !_isPunching)
         {
 
             // Animasi Player
@@ -172,7 +172,7 @@ public class PlayerMovement : MonoBehaviour
             // Setting TPS dan FPS Camera
             switch (_cameraManager.CameraState)
             {
-            case CameraState.ThirdPerson:
+                case CameraState.ThirdPerson:
                     if (axisDirection.magnitude >= 0.1f)
                     {
                         // Pergerakan Player
@@ -186,37 +186,37 @@ public class PlayerMovement : MonoBehaviour
                     {
                         if (_isGrounded && !_isJump)
                         {
-                            _rigidbody.velocity = Vector3.zero;
+                            _rigidbody.velocity = new Vector3(0f, _rigidbody.velocity.y, 0f);
                         }
                     }
-                break;
+                    break;
 
-            case CameraState.FirstPerson:
-                if (axisDirection.magnitude >= 0.1f)
-                {
-                    transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
-                    Vector3 verticalDirection = axisDirection.y * transform.forward;
-                    Vector3 horizontalDirection = axisDirection.x * transform.right;
-                    movementDirection = verticalDirection + horizontalDirection;
-                    _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange); 
-                }
-                else
-                {
-                    transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
-                    
-                    if (_isGrounded && !_isJump)
+                case CameraState.FirstPerson:
+                    if (axisDirection.magnitude >= 0.1f)
+                    {
+                        transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
+                        Vector3 verticalDirection = axisDirection.y * transform.forward;
+                        Vector3 horizontalDirection = axisDirection.x * transform.right;
+                        movementDirection = verticalDirection + horizontalDirection;
+                        _rigidbody.AddForce(movementDirection * _speed * Time.deltaTime, ForceMode.VelocityChange);
+                    }
+                    else
+                    {
+                        transform.rotation = Quaternion.Euler(0f, _cameraTransform.eulerAngles.y, 0f);
+
+                        if (_isGrounded && !_isJump)
                         {
-                            _rigidbody.velocity = Vector3.zero;
+                            _rigidbody.velocity = new Vector3(0f, _rigidbody.velocity.y, 0f);
                         }
-                }
-                
-                break;
-                
-            default:
-                break;
+                    }
+
+                    break;
+
+                default:
+                    break;
             }
         }
-        
+
         // Pergerakan Player Memanjat
         else if (isPlayerClimbing)
         {
@@ -224,7 +224,7 @@ public class PlayerMovement : MonoBehaviour
             bool isInRightClimbBorder = Physics.Raycast(_rightClimbBorder.position, transform.forward, out RaycastHit rightHit, _climbCheckDistance, _climbableLayer);
             bool isInUpperClimbBorder = Physics.Raycast(_upperClimbBorder.position, transform.forward, out RaycastHit upperHit, _climbCheckDistance, _climbableLayer);
             bool isInLowerClimbBorder = Physics.Raycast(_lowerClimbBorder.position, transform.forward, out RaycastHit lowerHit, _climbCheckDistance, _climbableLayer);
-                
+
             // Border Climb Checker
             if (axisDirection.x < 0 && !isInLeftClimbBorder)
             {
@@ -251,15 +251,25 @@ public class PlayerMovement : MonoBehaviour
             }
 
             // Pergerakan Player Memanjat
-            Vector3 horizontal = axisDirection.x * transform.right;
-            Vector3 vertical = axisDirection.y * transform.up;
-            movementDirection = horizontal + vertical;
-            _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime, ForceMode.VelocityChange);
+            if (axisDirection.magnitude >= 0.1f)
+            {
+                Vector3 horizontal = axisDirection.x * transform.right;
+                Vector3 vertical = axisDirection.y * transform.up;
+                movementDirection = horizontal + vertical;
+                _rigidbody.AddForce(movementDirection * _climbSpeed * Time.deltaTime, ForceMode.VelocityChange);
 
-            // Animasi Player Memanjat
-            Vector3 velocity = new Vector3(_rigidbody.velocity.x, _rigidbody.velocity.y, 0f);
-            _animator.SetFloat("ClimbVelocityY", velocity.magnitude * axisDirection.y);
-            _animator.SetFloat("ClimbVelocityX", velocity.magnitude * axisDirection.x);
+                // Animasi Player Memanjat
+                Vector3 velocity = new Vector3(_rigidbody.velocity.x, _rigidbody.velocity.y, 0f);
+                _animator.SetFloat("ClimbVelocityY", velocity.magnitude * axisDirection.y);
+                _animator.SetFloat("ClimbVelocityX", velocity.magnitude * axisDirection.x);
+            }
+            else
+            {
+                _rigidbody.velocity = Vector3.zero;
+                _animator.SetFloat("ClimbVelocityY", 0f);
+                _animator.SetFloat("ClimbVelocityX", 0f);
+            }
+            
         }
 
         // Pergerakan Player Glide
@@ -303,6 +313,7 @@ public class PlayerMovement : MonoBehaviour
             _rigidbody.AddForce(jumpDirection * _jumpForce, ForceMode.Impulse);
             _animator.SetBool("IsJump", true);
             _animator.SetBool("IsJump", false);
+            _isJump = false;
         }
     }
 
@@ -421,7 +432,7 @@ public class PlayerMovement : MonoBehaviour
             _rigidbody.useGravity = false;
 
             // Set Animasi Climb
-            _animator.SetBool("IsClimb", true);
+            _animator.SetBool("IsClimbing", true);
         }
     }
 
@@ -445,7 +456,7 @@ public class PlayerMovement : MonoBehaviour
             transform.position -= transform.forward * 1f;
 
             // Set Animasi Climb
-            _animator.SetBool("IsClimb", false);
+            _animator.SetBool("IsClimbing", false);
         }
     }
 
