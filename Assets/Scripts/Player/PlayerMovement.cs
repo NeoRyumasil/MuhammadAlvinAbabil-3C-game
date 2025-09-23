@@ -403,7 +403,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isHitLowerStep && !isHitUpperStep)
         {
-            _rigidbody.AddForce(0, _stepForce, 0, ForceMode.VelocityChange);
+            _rigidbody.AddForce(0, _stepForce, 0, ForceMode.Impulse);
         }
     }
 
