@@ -73,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform _hitDetector;
     [SerializeField] private CameraManager _cameraManager;
     [SerializeField] private PlayerAudioManager _playerAudioManager;
+    public Transform _resetPointPosition;
 
     private Animator _animator;
     private CapsuleCollider _collider;
@@ -565,7 +566,20 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(_resetComboInterval);
         _combo = 0;    
     }
-    
+
+    // Respawn Player
+    public void Respawn()
+    {
+        if (_resetPointPosition != null)
+        {
+            transform.position = _resetPointPosition.position;
+            transform.rotation = _resetPointPosition.rotation;
+            _rigidbody.velocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+            Debug.Log("Player Respawned");
+        }
+    }
+
     // Gizmos
     private void OnDrawGizmos()
     {
@@ -587,7 +601,7 @@ public class PlayerMovement : MonoBehaviour
             Gizmos.DrawLine(_climbDetector.position, _climbDetector.position + (_climbDetector.forward * _climbCheckDistance));
         }
 
-         if (isInLeftClimbBorder)
+        if (isInLeftClimbBorder)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawLine(_leftClimbBorder.position, _leftClimbBorder.position + (_leftClimbBorder.forward * _climbCheckDistance));
