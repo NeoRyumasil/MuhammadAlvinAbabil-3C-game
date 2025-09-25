@@ -5,10 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
+    // Scene Name
+    [SerializeField] private string _gameSceneName;
+
     // Play Button
     public void Play()
     {
-        SceneManager.LoadScene("Gameplay");
+        SceneManager.LoadScene(_gameSceneName);
     }
 
     // Exit Button
