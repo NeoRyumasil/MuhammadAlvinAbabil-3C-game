@@ -8,6 +8,7 @@ public class GameplayManager : MonoBehaviour
 
     // Set Object References
     [SerializeField] private InputManager _inputManager;
+    [SerializeField] private string _mainMenuSceneName;
 
     // Start
     private void Start()
@@ -26,6 +27,6 @@ public class GameplayManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene(_mainMenuSceneName);
     }
 }
