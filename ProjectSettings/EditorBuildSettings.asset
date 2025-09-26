@@ -12,9 +12,9 @@ EditorBuildSettings:
     path: Assets/Basic/Scenes/GamePlay/GamePlay.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/GoldSeeker/Scenes/DecoratedBlockOut.unity
-    guid: e7727113982324544b760d4744394f49
-  - enabled: 1
     path: Assets/GoldSeeker/Scenes/GameMainMenu.unity
     guid: dffd34a8238938c4a8132d1aaea1cef5
+  - enabled: 1
+    path: Assets/GoldSeeker/Scenes/DecoratedBlockOut.unity
+    guid: e7727113982324544b760d4744394f49
   m_configObjects: {}
